@@ -1,22 +1,28 @@
+from dotenv import load_dotenv
 from signalrcore.hub_connection_builder import HubConnectionBuilder
 import logging
 import requests
 import json
 import time
+import os
 
+load_dotenv()
 
 class Main:
     def __init__(self):
         """Setup environment variables and default values."""
         self._hub_connection = None
-        self.HOST = None  # Setup your host here
-        self.TOKEN = None  # Setup your token here
+        self.HOST = "https://hvac-simulator-a23-y2kpq.ondigitalocean.app"  # Setup your host here
+        self.TOKEN = os.getenv("TOKEN")  # Setup your token here
 
-        self.TICKETS = 1  # Setup your tickets here
-        self.T_MAX = None  # Setup your max temperature here
-        self.T_MIN = None  # Setup your min temperature here
-        self.DATABASE = None  # Setup your database here
-
+        self.TICKETS = 2  # Setup your tickets here
+        self.T_MAX = 24  # Setup your max temperature here
+        self.T_MIN = 19  # Setup your min temperature here
+        self.DATABASE_SERVER_NAME = os.getenv("DATABASE_SERVER_NAME")  # Setup your database here
+        self.DATABASE_NAME = os.getenv("DATABASE_NAME")
+        self.DATABASE_USER_NAME = os.getenv("DATABASE_USER_NAME") 
+        self.DATABASE_PASSWORD = os.getenv("DATABASE_PASSWORD")
+        
     def __del__(self):
         if self._hub_connection != None:
             self._hub_connection.stop()
