@@ -1,12 +1,13 @@
-from dotenv import load_dotenv
-from signalrcore.hub_connection_builder import HubConnectionBuilder
 import logging
-import requests
 import json
 import time
 import os
+from dotenv import load_dotenv
+from signalrcore.hub_connection_builder import HubConnectionBuilder
+import requests
 
 load_dotenv()
+
 
 class Main:
     def __init__(self):
@@ -18,13 +19,15 @@ class Main:
         self.TICKETS = 2  # Setup your tickets here
         self.T_MAX = 24  # Setup your max temperature here
         self.T_MIN = 19  # Setup your min temperature here
-        self.DATABASE_SERVER_NAME = os.getenv("DATABASE_SERVER_NAME")  # Setup your database here
+        self.DATABASE_SERVER_NAME = os.getenv(
+            "DATABASE_SERVER_NAME"
+        )  # Setup your database here
         self.DATABASE_NAME = os.getenv("DATABASE_NAME")
-        self.DATABASE_USER_NAME = os.getenv("DATABASE_USER_NAME") 
+        self.DATABASE_USER_NAME = os.getenv("DATABASE_USER_NAME")
         self.DATABASE_PASSWORD = os.getenv("DATABASE_PASSWORD")
-        
+
     def __del__(self):
-        if self._hub_connection != None:
+        if self._hub_connection is not None:
             self._hub_connection.stop()
 
     def setup(self):
@@ -58,10 +61,16 @@ class Main:
         )
 
         self._hub_connection.on("ReceiveSensorData", self.on_sensor_data_received)
-        self._hub_connection.on_open(lambda: print("||| Connection opened.", flush=True))
-        self._hub_connection.on_close(lambda: print("||| Connection closed.", flush=True))
+        self._hub_connection.on_open(
+            lambda: print("||| Connection opened.", flush=True)
+        )
+        self._hub_connection.on_close(
+            lambda: print("||| Connection closed.", flush=True)
+        )
         self._hub_connection.on_error(
-            lambda data: print(f"||| An exception was thrown closed: {data.error}", flush=True)
+            lambda data: print(
+                f"||| An exception was thrown closed: {data.error}", flush=True
+            )
         )
 
     def on_sensor_data_received(self, data):
