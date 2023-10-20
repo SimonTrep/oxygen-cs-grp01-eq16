@@ -19,9 +19,8 @@ class Main:
         self.TICKETS = 2  # Setup your tickets here
         self.T_MAX = 24  # Setup your max temperature here
         self.T_MIN = 19  # Setup your min temperature here
-        self.DATABASE_SERVER_NAME = os.getenv(
-            "DATABASE_SERVER_NAME"
-        )  # Setup your database here
+        # Setup your database here
+        self.DATABASE_SERVER_NAME = os.getenv("DATABASE_SERVER_NAME")
         self.DATABASE_NAME = os.getenv("DATABASE_NAME")
         self.DATABASE_USER_NAME = os.getenv("DATABASE_USER_NAME")
         self.DATABASE_PASSWORD = os.getenv("DATABASE_PASSWORD")
