@@ -1,0 +1,10 @@
+[MESSAGES CONTROL]
+
+disable=
+    invalid-name,
+    missing-docstring,
+    too-many-instance-attributes,
+    missing-timeout,
+    unused-argument,
+    unused-variable,
+    broad-exception-caught
