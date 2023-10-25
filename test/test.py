@@ -34,7 +34,6 @@ class TestOxygenCs(unittest.TestCase):
         self.assertEqual(output, "")
 
     def test_on_sensor_data_received(self):
-        data = [] * 1
         data = [{"data": "23.0", "date": "2023-10-25T02:20:31.7862399+00:00"}]
 
         output = self.get_print(self.main.on_sensor_data_received, data)
