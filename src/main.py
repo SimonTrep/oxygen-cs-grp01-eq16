@@ -13,7 +13,7 @@ class Main:
     def __init__(self):
         """Setup environment variables and default values."""
         self._hub_connection = None
-        self.HOST = "https://hvac-simulator-a23-y2kpq.ondigitalocean.app"  # Setup your host here
+        self.HOST = os.getenv("HOST")  # Setup your host here
         self.TOKEN = os.getenv("TOKEN")  # Setup your token here
 
         self.TICKETS = 2  # Setup your tickets here
@@ -58,7 +58,6 @@ class Main:
             )
             .build()
         )
-
         self._hub_connection.on("ReceiveSensorData", self.on_sensor_data_received)
         self._hub_connection.on_open(
             lambda: print("||| Connection opened.", flush=True)
