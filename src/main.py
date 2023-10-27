@@ -2,6 +2,8 @@ import logging
 import json
 import time
 import os
+from dbConnection import get_conn
+from datetime import datetime
 from dotenv import load_dotenv
 from signalrcore.hub_connection_builder import HubConnectionBuilder
 import requests
@@ -19,12 +21,8 @@ class Main:
         self.TICKETS = 2  # Setup your tickets here
         self.T_MAX = 24  # Setup your max temperature here
         self.T_MIN = 19  # Setup your min temperature here
-        # Setup your database here
-        self.DATABASE_SERVER_NAME = os.getenv("DATABASE_SERVER_NAME")
-        self.DATABASE_NAME = os.getenv("DATABASE_NAME")
-        self.DATABASE_USER_NAME = os.getenv("DATABASE_USER_NAME")
-        self.DATABASE_PASSWORD = os.getenv("DATABASE_PASSWORD")
-
+        self.dbConnection = get_conn()
+        
     def __del__(self):
         if self._hub_connection is not None:
             self._hub_connection.stop()
@@ -78,6 +76,7 @@ class Main:
             print(data[0]["date"] + " --> " + data[0]["data"], flush=True)
             date = data[0]["date"]
             temperature = float(data[0]["data"])
+            self.save_data_to_database(date, temperature)
             self.take_action(temperature)
         except Exception as err:
             print(err, flush=True)
@@ -94,14 +93,29 @@ class Main:
         r = requests.get(f"{self.HOST}/api/hvac/{self.TOKEN}/{action}/{self.TICKETS}")
         details = json.loads(r.text)
         print(details, flush=True)
+        self.send_event_to_database(details)
 
-    def send_event_to_database(self, timestamp, event):
+    def send_event_to_database(self, event):
+        """Save event into database."""
+        try:
+            cursor = self.dbConnection.cursor()
+            current_datetime = datetime.now()
+            cursor.execute("INSERT INTO hvacEvents (date, event) VALUES (?, ?)", current_datetime, str(event))
+            self.dbConnection.commit()
+            pass
+        except Exception as e:
+            print(e, flush=True)
+            pass
+
+    def save_data_to_database(self, timestamp, temperature):
         """Save sensor data into database."""
         try:
-            # To implement
+            cursor = self.dbConnection.cursor()
+            cursor.execute("INSERT INTO temperatures (date, temperature) VALUES (?, ?)", datetime.fromisoformat(timestamp.split(".")[0]), temperature)
+            self.dbConnection.commit()
             pass
-        except requests.exceptions.RequestException as e:
-            # To implement
+        except Exception as e:
+            print(e, flush=True)
             pass
 
 
