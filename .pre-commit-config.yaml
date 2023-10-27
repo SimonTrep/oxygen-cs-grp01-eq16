@@ -1,1 +1,24 @@
-## To implement
+repos:
+  - repo: local
+    hooks:
+      - id: pylint
+        name: pylint
+        entry: pylint
+        language: system
+        types: [python]
+        args:
+          [
+            "-rn", # Only display messages
+            "-sn", # Don't display the score
+            "--rcfile=.pylintrc", # Link to your config file
+          ]
+      - id: black
+        name: black
+        entry: black
+        language: system
+        types: [python]
+      - id: unittests
+        name: Run Unit Tests
+        language: system
+        pass_filenames: false
+        entry: python -m unittest discover 

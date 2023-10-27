@@ -1,14 +1,15 @@
-from dotenv import load_dotenv
-from signalrcore.hub_connection_builder import HubConnectionBuilder
 import logging
-import requests
 import json
 import time
 import os
 from dbConnection import get_conn
 from datetime import datetime
+from dotenv import load_dotenv
+from signalrcore.hub_connection_builder import HubConnectionBuilder
+import requests
 
 load_dotenv()
+
 
 class Main:
     def __init__(self):
@@ -23,7 +24,7 @@ class Main:
         self.dbConnection = get_conn()
         
     def __del__(self):
-        if self._hub_connection != None:
+        if self._hub_connection is not None:
             self._hub_connection.stop()
 
     def setup(self):
@@ -57,10 +58,16 @@ class Main:
         )
 
         self._hub_connection.on("ReceiveSensorData", self.on_sensor_data_received)
-        self._hub_connection.on_open(lambda: print("||| Connection opened.", flush=True))
-        self._hub_connection.on_close(lambda: print("||| Connection closed.", flush=True))
+        self._hub_connection.on_open(
+            lambda: print("||| Connection opened.", flush=True)
+        )
+        self._hub_connection.on_close(
+            lambda: print("||| Connection closed.", flush=True)
+        )
         self._hub_connection.on_error(
-            lambda data: print(f"||| An exception was thrown closed: {data.error}", flush=True)
+            lambda data: print(
+                f"||| An exception was thrown closed: {data.error}", flush=True
+            )
         )
 
     def on_sensor_data_received(self, data):
