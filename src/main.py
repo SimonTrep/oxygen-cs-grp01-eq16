@@ -1,14 +1,13 @@
-# pylint: disable=E1101
-
-import logging
 import json
-import time
+import logging
 import os
-from dbConnection import get_conn
+import time
+
 from datetime import datetime
 from dotenv import load_dotenv
 from signalrcore.hub_connection_builder import HubConnectionBuilder
 import requests
+from .dbConnection import get_conn
 
 load_dotenv()
 
@@ -24,7 +23,7 @@ class Main:
         self.T_MAX = os.getenv("T_MAX")  # Setup your max temperature here
         self.T_MIN = os.getenv("T_MIN")  # Setup your min temperature here
 
-        self.dbConnection = get_conn()        
+        self.dbConnection = get_conn()
 
     def __del__(self):
         if self._hub_connection is not None:
@@ -103,7 +102,11 @@ class Main:
         try:
             cursor = self.dbConnection.cursor()
             current_datetime = datetime.now()
-            cursor.execute("INSERT INTO hvacEvents (date, event) VALUES (?, ?)", current_datetime, str(event))
+            cursor.execute(
+                "INSERT INTO hvacEvents (date, event) VALUES (?, ?)",
+                current_datetime,
+                str(event),
+            )
             self.dbConnection.commit()
             pass
         except Exception as e:
@@ -114,7 +117,11 @@ class Main:
         """Save sensor data into database."""
         try:
             cursor = self.dbConnection.cursor()
-            cursor.execute("INSERT INTO temperatures (date, temperature) VALUES (?, ?)", datetime.fromisoformat(timestamp.split(".")[0]), temperature)
+            cursor.execute(
+                "INSERT INTO temperatures (date, temperature) VALUES (?, ?)",
+                datetime.fromisoformat(timestamp.split(".")[0]),
+                temperature,
+            )
             self.dbConnection.commit()
             pass
         except Exception as e:

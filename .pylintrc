@@ -1,3 +1,6 @@
+[MASTER]
+extension-pkg-allow-list=pyodbc
+
 [MESSAGES CONTROL]
 
 disable=
@@ -5,6 +8,6 @@ disable=
     missing-docstring,
     too-many-instance-attributes,
     missing-timeout,
-    unused-argument,
-    unused-variable,
-    broad-exception-caught
+    broad-exception-caught,
+    unnecessary-pass,
+    E1101
