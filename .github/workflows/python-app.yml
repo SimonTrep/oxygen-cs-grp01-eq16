@@ -6,12 +6,15 @@ name: Python application
 on:
   push:
     branches: [ "copy-of-main" ]
+  pull_request: # TODO: there is no real need to trigger on this event, but it is used now for tests
+    branches:
+      - copy-of-main
 
 permissions:
   contents: read
 
 jobs:
-  build:
+  build: # TODO: check if need to add deploy
 
     runs-on: ubuntu-latest
     env:
@@ -37,6 +40,10 @@ jobs:
           python -m pip install --upgrade pip
           pip install pylint black pytest
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+#      - name: Decode base64 strings #TODO: the decoding should be done in code itself
+#        run: |
+#          echo $TOKEN | base64 --decode --ignore-garbage > token.der
+#          echo $USERPASSWORD | base64 --decode > dbpswd.der
       - name: Lint with pylint and stop build if there are python syntax errors or undefined names
         run: |
           pylint src/ || (echo "Linting failed" && exit 1)
