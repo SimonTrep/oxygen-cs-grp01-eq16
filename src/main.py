@@ -1,3 +1,5 @@
+# pylint: disable=E1101
+
 import logging
 import json
 import time
@@ -16,14 +18,9 @@ class Main:
         self.HOST = os.getenv("HOST")  # Setup your host here
         self.TOKEN = os.getenv("TOKEN")  # Setup your token here
 
-        self.TICKETS = 2  # Setup your tickets here
-        self.T_MAX = 24  # Setup your max temperature here
-        self.T_MIN = 19  # Setup your min temperature here
-        # Setup your database here
-        self.DATABASE_SERVER_NAME = os.getenv("DATABASE_SERVER_NAME")
-        self.DATABASE_NAME = os.getenv("DATABASE_NAME")
-        self.DATABASE_USER_NAME = os.getenv("DATABASE_USER_NAME")
-        self.DATABASE_PASSWORD = os.getenv("DATABASE_PASSWORD")
+        self.TICKETS = os.getenv("TICKETS")  # Setup your tickets here
+        self.T_MAX = os.getenv("T_MAX")  # Setup your max temperature here
+        self.T_MIN = os.getenv("T_MIN")  # Setup your min temperature here
 
     def __del__(self):
         if self._hub_connection is not None:
@@ -58,6 +55,7 @@ class Main:
             )
             .build()
         )
+
         self._hub_connection.on("ReceiveSensorData", self.on_sensor_data_received)
         self._hub_connection.on_open(
             lambda: print("||| Connection opened.", flush=True)
