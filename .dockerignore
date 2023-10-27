@@ -1,0 +1,9 @@
+.env
+.gitignore
+*.md
+.cache
+logs
+LICENSE
+__pycache__
+*.pxd
+*.pyd

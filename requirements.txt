@@ -1,0 +1,4 @@
+requests
+signalrcore
+python-dotenv
+pyodbc
