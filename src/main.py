@@ -24,6 +24,8 @@ class Main:
         self.T_MAX = os.getenv("T_MAX")  # Setup your max temperature here
         self.T_MIN = os.getenv("T_MIN")  # Setup your min temperature here
 
+        self.dbConnection = get_conn()        
+
     def __del__(self):
         if self._hub_connection is not None:
             self._hub_connection.stop()
