@@ -1,3 +1,5 @@
+# pylint: disable=E1101
+
 import logging
 import json
 import time
@@ -15,14 +17,13 @@ class Main:
     def __init__(self):
         """Setup environment variables and default values."""
         self._hub_connection = None
-        self.HOST = "https://hvac-simulator-a23-y2kpq.ondigitalocean.app"  # Setup your host here
+        self.HOST = os.getenv("HOST")  # Setup your host here
         self.TOKEN = os.getenv("TOKEN")  # Setup your token here
 
-        self.TICKETS = 2  # Setup your tickets here
-        self.T_MAX = 24  # Setup your max temperature here
-        self.T_MIN = 19  # Setup your min temperature here
-        self.dbConnection = get_conn()
-        
+        self.TICKETS = os.getenv("TICKETS")  # Setup your tickets here
+        self.T_MAX = os.getenv("T_MAX")  # Setup your max temperature here
+        self.T_MIN = os.getenv("T_MIN")  # Setup your min temperature here
+
     def __del__(self):
         if self._hub_connection is not None:
             self._hub_connection.stop()
