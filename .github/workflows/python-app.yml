@@ -1,0 +1,78 @@
+# This workflow will install Python dependencies, run tests and lint with a single version of Python
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-python
+
+name: Python application
+
+on:
+  push:
+    branches: [ "copy-of-main" ]
+  pull_request:
+    branches:
+      - copy-of-main
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    env:
+      DOCKERHUB_USER_NAME: log680eq16
+      IMAGE_NAME: pipeline-test # oxygen-cs-grp01-eq16
+      GITHUB_RUN_NUMBER: ${{ github.run_number }}
+      TICKETS: 2
+      T_MAX: 25
+      T_MIN: 19
+
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+
+      - name: Install dependencies
+        run: |
+          apt-get update && apt-get install -y --no-install-recommends unixodbc-dev unixodbc libpq-dev
+          python -m pip install --upgrade pip
+          pip install pylint black
+          pip install -r requirements.txt
+
+      - name: Lint with pylint and stop build if there are python syntax errors or undefined names
+        run: |
+          pylint src/ test/ || (echo "Linting failed" && exit 1)
+
+      - name: Format with black
+        run: |
+          black src/ test/
+
+      - name: Test with unittest
+        run: |
+          python -m unittest test.test.TestOxygenCs
+
+      - name: Build docker image
+        run: |
+          docker build -t $IMAGE_NAME:$GITHUB_RUN_NUMBER .
+          curl -L -o dist_linux.tar.gz https://downloads.dockerslim.com/releases/1.40.4/dist_linux.tar.gz
+          tar -xvf dist_linux.tar.gz
+          chmod +x ./dist_linux/docker-slim
+          ./dist_linux/docker-slim build --http-probe=false --continue-after=1 $IMAGE_NAME:$GITHUB_RUN_NUMBER
+          echo "Docker images: "
+          docker image ls
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@f4ef78c080cd8ba55a85445d5b36e214a81df20a
+        with:
+          username: 'log680eq16'
+          password: 'dckr_pat_CItbsGiDUfrBdkY2g_2Ww3zYWK8'
+
+      - name: Deploy to Docker Hub
+        run: |
+          docker tag $IMAGE_NAME.slim:latest $DOCKERHUB_USER_NAME/$IMAGE_NAME.slim:$GITHUB_RUN_NUMBER
+          docker push $DOCKERHUB_USER_NAME/$IMAGE_NAME.slim:$GITHUB_RUN_NUMBER
+          docker tag $IMAGE_NAME.slim:latest $DOCKERHUB_USER_NAME/$IMAGE_NAME.slim:latest
+          docker push $DOCKERHUB_USER_NAME/$IMAGE_NAME.slim:latest

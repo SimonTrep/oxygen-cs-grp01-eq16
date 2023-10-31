@@ -1,8 +1,10 @@
 from io import StringIO
 import sys
+
 import os
 import unittest
 from dotenv import load_dotenv
+
 from src.main import Main
 
 load_dotenv()
