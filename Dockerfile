@@ -14,5 +14,6 @@
 
 FROM python:alpine3.18
 COPY src/ test/ requirements.txt ./
+RUN apk add build-base unixodbc-dev
 RUN pip install --no-cache-dir -r requirements.txt
 CMD ["python", "./main.py"]

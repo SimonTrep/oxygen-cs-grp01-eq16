@@ -1,5 +1,3 @@
-# pylint: disable=E1101
-
 import logging
 import json
 import time
@@ -8,7 +6,7 @@ from datetime import datetime
 import requests
 from dotenv import load_dotenv
 from signalrcore.hub_connection_builder import HubConnectionBuilder
-from src.dbConnection import get_conn
+import pyodbc
 
 load_dotenv()
 
@@ -24,7 +22,7 @@ class Main:
         self.T_MAX = int(os.getenv("T_MAX"))  # Setup your max temperature here
         self.T_MIN = int(os.getenv("T_MIN"))  # Setup your min temperature here
 
-        self.dbConnection = get_conn()
+        self.dbConnection = self.get_conn()
 
     def __del__(self):
         if self._hub_connection is not None:
@@ -126,6 +124,29 @@ class Main:
 
         except Exception as e:
             print(e, flush=True)
+
+    def get_conn(self):
+        database_server_name = os.getenv("DATABASE_SERVER_NAME")
+        database_name = os.getenv("DATABASE_NAME")
+        user_name = os.getenv("USER_NAME")
+        user_password = os.getenv("USER_PASSWORD")
+        connection_string = (
+            """Driver={ODBC Driver 18 for SQL Server};
+                                Server=tcp:"""
+            + str(database_server_name)
+            + """.database.windows.net,1433;
+                            Database="""
+            + str(database_name)
+            + """;
+                            UID="""
+            + str(user_name)
+            + """;
+                            PWD="""
+            + str(user_password)
+            + """;
+                            Encrypt=yes;TrustServerCertificate=no;Connection Timeout=-1"""
+        )
+        return pyodbc.connect(connection_string)
 
 
 if __name__ == "__main__":

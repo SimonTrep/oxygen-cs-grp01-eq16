@@ -1,5 +1,4 @@
 [MASTER]
-init-hook='import sys; sys.path.append(".")'
 extension-pkg-whitelist=pyodbc
 [MESSAGES CONTROL]
 
@@ -8,6 +7,5 @@ disable=
     missing-docstring,
     too-many-instance-attributes,
     missing-timeout,
-    unused-argument,
-    unused-variable,
-    broad-exception-caught
+    broad-exception-caught,
+    E1101
