@@ -70,6 +70,10 @@ jobs:
           # optional: for unixODBC development headers
           sudo apt-get install -y unixodbc-dev
 
+      - name: Test with unittest
+        run: |
+          python -m unittest test.test.TestOxygenCs
+
       - name: Lint with pylint and stop build if there are python syntax errors or undefined names
         run: |
           pylint src/ test/ || (echo "Linting failed" && exit 1)
@@ -77,10 +81,6 @@ jobs:
       - name: Format with black
         run: |
           black src/ test/
-
-      - name: Test with unittest
-        run: |
-          python -m unittest test.test.TestOxygenCs
 
       - name: Build docker image
         run: |
