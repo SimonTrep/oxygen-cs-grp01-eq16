@@ -5,10 +5,10 @@ name: Python application
 
 on:
   push:
-    branches: [ "copy-of-main" ]
-  pull_request:
-    branches:
-      - copy-of-main
+    branches: [ "main" ]
+#  pull_request:
+#    branches:
+#      - main
 
 permissions:
   contents: read
@@ -26,7 +26,7 @@ jobs:
       USER_NAME: admin680
       USER_PASSWORD: '@dm1n68O'
       DOCKERHUB_USER_NAME: log680eq16
-      IMAGE_NAME: pipeline-test # oxygen-cs-grp01-eq16
+      IMAGE_NAME: oxygen-cs-grp01-eq16
       GITHUB_RUN_NUMBER: ${{ github.run_number }}
       TICKETS: 2
       T_MAX: 25
