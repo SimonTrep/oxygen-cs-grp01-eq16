@@ -19,6 +19,12 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
+      HOST: https://hvac-simulator-a23-y2kpq.ondigitalocean.app
+      TOKEN: d6zr8332Zy
+      DATABASE_SERVER_NAME: log680
+      DATABASE_NAME: log-680
+      USER_NAME: admin680
+      USER_PASSWORD: '@dm1n68O'
       DOCKERHUB_USER_NAME: log680eq16
       IMAGE_NAME: pipeline-test # oxygen-cs-grp01-eq16
       GITHUB_RUN_NUMBER: ${{ github.run_number }}
@@ -37,10 +43,31 @@ jobs:
 
       - name: Install dependencies
         run: |
-          apt-get update && apt-get install -y --no-install-recommends unixodbc-dev unixodbc libpq-dev
           python -m pip install --upgrade pip
+          sudo apt-get update && apt-get install -y --no-install-recommends unixodbc-dev unixodbc libpq-dev
           pip install pylint black
           pip install -r requirements.txt
+
+      - name: Install ODBC Driver
+        run: |
+          if ! [[ "18.04 20.04 22.04 23.04" == *"$(lsb_release -rs)"* ]];
+          then
+              echo "Ubuntu $(lsb_release -rs) is not currently supported.";
+              exit;
+          fi
+
+          curl https://packages.microsoft.com/keys/microsoft.asc | sudo tee /etc/apt/trusted.gpg.d/microsoft.asc
+
+          curl https://packages.microsoft.com/config/ubuntu/$(lsb_release -rs)/prod.list | sudo tee /etc/apt/sources.list.d/mssql-release.list
+
+          sudo apt-get update
+          sudo ACCEPT_EULA=Y apt-get install -y msodbcsql18
+          # optional: for bcp and sqlcmd
+          sudo ACCEPT_EULA=Y apt-get install -y mssql-tools18
+          echo 'export PATH="$PATH:/opt/mssql-tools18/bin"' >> ~/.bashrc
+          source ~/.bashrc
+          # optional: for unixODBC development headers
+          sudo apt-get install -y unixodbc-dev
 
       - name: Lint with pylint and stop build if there are python syntax errors or undefined names
         run: |
