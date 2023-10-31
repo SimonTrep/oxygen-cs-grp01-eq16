@@ -9,13 +9,6 @@ from src.main import Main
 
 load_dotenv()
 
-# HOST = os.getenv("HOST")
-# TOKEN = os.getenv("TOKEN")
-# DATABASE_SERVER_NAME = os.getenv("DATABASE_SERVER_NAME")
-# DATABASE_NAME = os.getenv("DATABASE_NAME")
-# USER_NAME = os.getenv("USER_NAME")
-# USER_PASSWORD = os.getenv("USER_PASSWORD")
-
 TICKETS = int(os.getenv("TICKETS"))
 T_MAX = int(os.getenv("T_MAX"))
 T_MIN = int(os.getenv("T_MIN"))
