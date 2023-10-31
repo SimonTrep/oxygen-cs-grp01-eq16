@@ -85,12 +85,13 @@ jobs:
       - name: Build docker image
         run: |
           docker build -t $IMAGE_NAME:$GITHUB_RUN_NUMBER .
-          curl -L -o dist_linux.tar.gz https://downloads.dockerslim.com/releases/1.40.4/dist_linux.tar.gz
-          tar -xvf dist_linux.tar.gz
-          chmod +x ./dist_linux/docker-slim
-          ./dist_linux/docker-slim build --http-probe=false --continue-after=1 $IMAGE_NAME:$GITHUB_RUN_NUMBER
-          echo "Docker images: "
-          docker image ls
+
+#      - name: Slim Docker - DO NOT RUN IN PIPELINE - IT REMOVES DEPENDENCIES FOR DB
+#        run: |
+#          curl -L -o dist_linux.tar.gz https://downloads.dockerslim.com/releases/1.40.4/dist_linux.tar.gz
+#          tar -xvf dist_linux.tar.gz
+#          chmod +x ./dist_linux/docker-slim
+#          ./dist_linux/docker-slim build --http-probe=false --continue-after=1 $IMAGE_NAME:$GITHUB_RUN_NUMBER
 
       - name: Login to Docker Hub
         uses: docker/login-action@f4ef78c080cd8ba55a85445d5b36e214a81df20a
@@ -100,7 +101,10 @@ jobs:
 
       - name: Deploy to Docker Hub
         run: |
-          docker tag $IMAGE_NAME.slim:latest $DOCKERHUB_USER_NAME/$IMAGE_NAME.slim:$GITHUB_RUN_NUMBER
-          docker push $DOCKERHUB_USER_NAME/$IMAGE_NAME.slim:$GITHUB_RUN_NUMBER
-          docker tag $IMAGE_NAME.slim:latest $DOCKERHUB_USER_NAME/$IMAGE_NAME.slim:latest
-          docker push $DOCKERHUB_USER_NAME/$IMAGE_NAME.slim:latest
+          docker tag $IMAGE_NAME:$GITHUB_RUN_NUMBER $DOCKERHUB_USER_NAME/$IMAGE_NAME:$GITHUB_RUN_NUMBER
+          docker push $DOCKERHUB_USER_NAME/$IMAGE_NAME:$GITHUB_RUN_NUMBER
+#          These tags will be used if slim works in pipeline
+#          docker tag $IMAGE_NAME.slim:latest $DOCKERHUB_USER_NAME/$IMAGE_NAME.slim:$GITHUB_RUN_NUMBER
+#          docker push $DOCKERHUB_USER_NAME/$IMAGE_NAME.slim:$GITHUB_RUN_NUMBER
+#          docker tag $IMAGE_NAME.slim:latest $DOCKERHUB_USER_NAME/$IMAGE_NAME.slim:latest
+#          docker push $DOCKERHUB_USER_NAME/$IMAGE_NAME.slim:latest
