@@ -103,6 +103,8 @@ jobs:
         run: |
           docker tag $IMAGE_NAME:$GITHUB_RUN_NUMBER $DOCKERHUB_USER_NAME/$IMAGE_NAME:$GITHUB_RUN_NUMBER
           docker push $DOCKERHUB_USER_NAME/$IMAGE_NAME:$GITHUB_RUN_NUMBER
+          docker tag $IMAGE_NAME:$GITHUB_RUN_NUMBER $DOCKERHUB_USER_NAME/$IMAGE_NAME:latest
+          docker push $DOCKERHUB_USER_NAME/$IMAGE_NAME:latest
 #          These tags will be used if slim works in pipeline
 #          docker tag $IMAGE_NAME.slim:latest $DOCKERHUB_USER_NAME/$IMAGE_NAME.slim:$GITHUB_RUN_NUMBER
 #          docker push $DOCKERHUB_USER_NAME/$IMAGE_NAME.slim:$GITHUB_RUN_NUMBER
