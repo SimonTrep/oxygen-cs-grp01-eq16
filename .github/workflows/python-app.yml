@@ -92,6 +92,9 @@ jobs:
       GITHUB_RUN_NUMBER: ${{ github.run_number }}
 
     steps:
+      - name: Check out the repo
+        uses: actions/checkout@v4
+
       - name: Build docker image
         run: |
           docker build -t $IMAGE_NAME:$GITHUB_RUN_NUMBER .
