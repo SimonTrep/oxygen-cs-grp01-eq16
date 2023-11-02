@@ -3,18 +3,13 @@
 
 name: Python application
 
-on:
-  push:
-    branches: [ "main" ]
-#  pull_request:
-#    branches:
-#      - main
+on: push
 
 permissions:
   contents: read
 
 jobs:
-  build:
+  test:
 
     runs-on: ubuntu-latest
 
@@ -82,23 +77,38 @@ jobs:
         run: |
           black src/ test/
 
+
+  deploy:
+
+    runs-on: ubuntu-latest
+
+    needs: test
+
+    if: github.ref == 'refs/heads/master'
+
+    env:
+      DOCKERHUB_USER_NAME: log680eq16
+      IMAGE_NAME: oxygen-cs-grp01-eq16
+      GITHUB_RUN_NUMBER: ${{ github.run_number }}
+
+    steps:
       - name: Build docker image
         run: |
           docker build -t $IMAGE_NAME:$GITHUB_RUN_NUMBER .
 
-#      - name: Slim Docker - DO NOT RUN IN PIPELINE - IT REMOVES DEPENDENCIES FOR DB
-#        run: |
-#          curl -L -o dist_linux.tar.gz https://downloads.dockerslim.com/releases/1.40.4/dist_linux.tar.gz
-#          tar -xvf dist_linux.tar.gz
-#          chmod +x ./dist_linux/docker-slim
-#          ./dist_linux/docker-slim build --http-probe=false --continue-after=1 $IMAGE_NAME:$GITHUB_RUN_NUMBER
+      #      - name: Slim Docker - DO NOT RUN IN PIPELINE - IT REMOVES DEPENDENCIES FOR DB
+      #        run: |
+      #          curl -L -o dist_linux.tar.gz https://downloads.dockerslim.com/releases/1.40.4/dist_linux.tar.gz
+      #          tar -xvf dist_linux.tar.gz
+      #          chmod +x ./dist_linux/docker-slim
+      #          ./dist_linux/docker-slim build --http-probe=false --continue-after=1 $IMAGE_NAME:$GITHUB_RUN_NUMBER
+
 
       - name: Login to Docker Hub
         uses: docker/login-action@f4ef78c080cd8ba55a85445d5b36e214a81df20a
         with:
           username: 'log680eq16'
           password: 'dckr_pat_CItbsGiDUfrBdkY2g_2Ww3zYWK8'
-
       - name: Deploy to Docker Hub
         run: |
           docker tag $IMAGE_NAME:$GITHUB_RUN_NUMBER $DOCKERHUB_USER_NAME/$IMAGE_NAME:$GITHUB_RUN_NUMBER
