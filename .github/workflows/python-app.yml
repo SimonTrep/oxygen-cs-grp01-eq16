@@ -95,6 +95,11 @@ jobs:
     steps:
       - name: Check out the repo
         uses: actions/checkout@v4
+
+      - name: Logout from dockerhub
+        run: |
+          docker logout
+
       - name: Print
         run: |
           echo $DOCKERHUB_USER_NAME
