@@ -90,6 +90,7 @@ jobs:
       DOCKERHUB_USER_NAME: log680eq16
       IMAGE_NAME: oxygen-cs-grp01-eq16
       GITHUB_RUN_NUMBER: ${{ github.run_number }}
+      DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD}}
 
     steps:
       - name: Check out the repo
@@ -97,7 +98,7 @@ jobs:
       - name: Print
         run: |
           echo $DOCKERHUB_USER_NAME
-          echo ${{ secrets.DOCKERHUB_PASSWORD }}
+          echo ${{ env.DOCKERHUB_PASSWORD }}
 
       - name: Log in to Docker Hub
         uses: docker/login-action@f4ef78c080cd8ba55a85445d5b36e214a81df20a
