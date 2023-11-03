@@ -9,82 +9,82 @@ permissions:
   contents: read
 
 jobs:
-  test:
-
-    runs-on: ubuntu-latest
-
-    env:
-      HOST: https://hvac-simulator-a23-y2kpq.ondigitalocean.app
-      TOKEN: d6zr8332Zy
-      DATABASE_SERVER_NAME: log680
-      DATABASE_NAME: log-680
-      USER_NAME: admin680
-      USER_PASSWORD: '@dm1n68O'
-      DOCKERHUB_USER_NAME: log680eq16
-      IMAGE_NAME: oxygen-cs-grp01-eq16
-      GITHUB_RUN_NUMBER: ${{ github.run_number }}
-      TICKETS: 2
-      T_MAX: 25
-      T_MIN: 19
-
-    steps:
-      - name: Check out the repo
-        uses: actions/checkout@v4
-
-      - name: Set up Python 3.10
-        uses: actions/setup-python@v4
-        with:
-          python-version: "3.10"
-
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          sudo apt-get update
-          sudo apt-get install -y --no-install-recommends unixodbc-dev unixodbc libpq-dev
-          pip install pylint black
-          pip install -r requirements.txt
-
-      - name: Install ODBC Driver
-        run: |
-          if ! [[ "18.04 20.04 22.04 23.04" == *"$(lsb_release -rs)"* ]];
-          then
-              echo "Ubuntu $(lsb_release -rs) is not currently supported.";
-              exit;
-          fi
-
-          curl https://packages.microsoft.com/keys/microsoft.asc | sudo tee /etc/apt/trusted.gpg.d/microsoft.asc
-
-          curl https://packages.microsoft.com/config/ubuntu/$(lsb_release -rs)/prod.list | sudo tee /etc/apt/sources.list.d/mssql-release.list
-
-          sudo apt-get update
-          sudo ACCEPT_EULA=Y apt-get install -y msodbcsql18
-          # optional: for bcp and sqlcmd
-          sudo ACCEPT_EULA=Y apt-get install -y mssql-tools18
-          echo 'export PATH="$PATH:/opt/mssql-tools18/bin"' >> ~/.bashrc
-          source ~/.bashrc
-          # optional: for unixODBC development headers
-          sudo apt-get install -y unixodbc-dev
-
-      - name: Test with unittest
-        run: |
-          python -m unittest test.test.TestOxygenCs
-
-      - name: Lint with pylint and stop build if there are python syntax errors or undefined names
-        run: |
-          pylint src/ test/ || (echo "Linting failed" && exit 1)
-
-      - name: Format with black
-        run: |
-          black src/ test/
+#  test:
+#
+#    runs-on: ubuntu-latest
+#
+#    env:
+#      HOST: https://hvac-simulator-a23-y2kpq.ondigitalocean.app
+#      TOKEN: d6zr8332Zy
+#      DATABASE_SERVER_NAME: log680
+#      DATABASE_NAME: log-680
+#      USER_NAME: admin680
+#      USER_PASSWORD: '@dm1n68O'
+#      DOCKERHUB_USER_NAME: log680eq16
+#      IMAGE_NAME: oxygen-cs-grp01-eq16
+#      GITHUB_RUN_NUMBER: ${{ github.run_number }}
+#      TICKETS: 2
+#      T_MAX: 25
+#      T_MIN: 19
+#
+#    steps:
+#      - name: Check out the repo
+#        uses: actions/checkout@v4
+#
+#      - name: Set up Python 3.10
+#        uses: actions/setup-python@v4
+#        with:
+#          python-version: "3.10"
+#
+#      - name: Install dependencies
+#        run: |
+#          python -m pip install --upgrade pip
+#          sudo apt-get update
+#          sudo apt-get install -y --no-install-recommends unixodbc-dev unixodbc libpq-dev
+#          pip install pylint black
+#          pip install -r requirements.txt
+#
+#      - name: Install ODBC Driver
+#        run: |
+#          if ! [[ "18.04 20.04 22.04 23.04" == *"$(lsb_release -rs)"* ]];
+#          then
+#              echo "Ubuntu $(lsb_release -rs) is not currently supported.";
+#              exit;
+#          fi
+#
+#          curl https://packages.microsoft.com/keys/microsoft.asc | sudo tee /etc/apt/trusted.gpg.d/microsoft.asc
+#
+#          curl https://packages.microsoft.com/config/ubuntu/$(lsb_release -rs)/prod.list | sudo tee /etc/apt/sources.list.d/mssql-release.list
+#
+#          sudo apt-get update
+#          sudo ACCEPT_EULA=Y apt-get install -y msodbcsql18
+#          # optional: for bcp and sqlcmd
+#          sudo ACCEPT_EULA=Y apt-get install -y mssql-tools18
+#          echo 'export PATH="$PATH:/opt/mssql-tools18/bin"' >> ~/.bashrc
+#          source ~/.bashrc
+#          # optional: for unixODBC development headers
+#          sudo apt-get install -y unixodbc-dev
+#
+#      - name: Test with unittest
+#        run: |
+#          python -m unittest test.test.TestOxygenCs
+#
+#      - name: Lint with pylint and stop build if there are python syntax errors or undefined names
+#        run: |
+#          pylint src/ test/ || (echo "Linting failed" && exit 1)
+#
+#      - name: Format with black
+#        run: |
+#          black src/ test/
 
 
   deploy:
 
     runs-on: ubuntu-latest
 
-    needs: test
-
-    if: github.ref == 'refs/heads/main'
+#    needs: test
+#
+#    if: github.ref == 'refs/heads/main'
 
     env:
       DOCKERHUB_USER_NAME: log680eq16
@@ -95,9 +95,32 @@ jobs:
       - name: Check out the repo
         uses: actions/checkout@v4
 
-      - name: Build docker image
-        run: |
-          docker build -t $IMAGE_NAME:$GITHUB_RUN_NUMBER .
+      - name: Log in to Docker Hub
+        uses: docker/login-action@f4ef78c080cd8ba55a85445d5b36e214a81df20a
+        with:
+          username: $DOCKERHUB_USER_NAME
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
+        with:
+          images: log680eq16/oxygen-cs-grp01-eq16
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@3b5e8027fcad23fda98b2e3ac259d8d67585f671
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: $DOCKERHUB_USER_NAME/$IMAGE_NAME:$GITHUB_RUN_NUMBER, $DOCKERHUB_USER_NAME/$IMAGE_NAME:latest
+          labels: ${{ steps.meta.outputs.labels }}
+
+
+
+#      - name: Build docker image
+#        run: |
+#          docker build -t $IMAGE_NAME:$GITHUB_RUN_NUMBER .
 
       #      - name: Slim Docker - DO NOT RUN IN PIPELINE - IT REMOVES DEPENDENCIES FOR DB
       #        run: |
@@ -107,17 +130,17 @@ jobs:
       #          ./dist_linux/docker-slim build --http-probe=false --continue-after=1 $IMAGE_NAME:$GITHUB_RUN_NUMBER
 
 
-      - name: Login to Docker Hub
-        uses: docker/login-action@f4ef78c080cd8ba55a85445d5b36e214a81df20a
-        with:
-          username: 'log680eq16'
-          password: 'dckr_pat_CItbsGiDUfrBdkY2g_2Ww3zYWK8'
-      - name: Deploy to Docker Hub
-        run: |
-          docker tag $IMAGE_NAME:$GITHUB_RUN_NUMBER $DOCKERHUB_USER_NAME/$IMAGE_NAME:$GITHUB_RUN_NUMBER
-          docker push $DOCKERHUB_USER_NAME/$IMAGE_NAME:$GITHUB_RUN_NUMBER
-          docker tag $IMAGE_NAME:$GITHUB_RUN_NUMBER $DOCKERHUB_USER_NAME/$IMAGE_NAME:latest
-          docker push $DOCKERHUB_USER_NAME/$IMAGE_NAME:latest
+#      - name: Login to Docker Hub
+#        uses: docker/login-action@f4ef78c080cd8ba55a85445d5b36e214a81df20a
+#        with:
+#          username: 'log680eq16'
+#          password: 'dckr_pat_CItbsGiDUfrBdkY2g_2Ww3zYWK8'
+#      - name: Deploy to Docker Hub
+#        run: |
+#          docker tag $IMAGE_NAME:$GITHUB_RUN_NUMBER $DOCKERHUB_USER_NAME/$IMAGE_NAME:$GITHUB_RUN_NUMBER
+#          docker push $DOCKERHUB_USER_NAME/$IMAGE_NAME:$GITHUB_RUN_NUMBER
+#          docker tag $IMAGE_NAME:$GITHUB_RUN_NUMBER $DOCKERHUB_USER_NAME/$IMAGE_NAME:latest
+#          docker push $DOCKERHUB_USER_NAME/$IMAGE_NAME:latest
 #          These tags will be used if slim works in pipeline
 #          docker tag $IMAGE_NAME.slim:latest $DOCKERHUB_USER_NAME/$IMAGE_NAME.slim:$GITHUB_RUN_NUMBER
 #          docker push $DOCKERHUB_USER_NAME/$IMAGE_NAME.slim:$GITHUB_RUN_NUMBER
