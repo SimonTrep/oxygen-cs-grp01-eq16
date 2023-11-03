@@ -87,7 +87,7 @@ jobs:
 #    if: github.ref == 'refs/heads/main'
 
     env:
-      DOCKERHUB_USER_NAME: log680eq16
+      DOCKERHUB_USER_NAME: 'log680eq16'
       IMAGE_NAME: oxygen-cs-grp01-eq16
       GITHUB_RUN_NUMBER: ${{ github.run_number }}
       DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD}}
