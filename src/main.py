@@ -15,8 +15,8 @@ class Main:
     def __init__(self):
         """Setup environment variables and default values."""
         self._hub_connection = None
-        self.HOST = os.getenv("HOST")  # Setup your host here
-        self.TOKEN = os.getenv("TOKEN")  # Setup your token here
+        self.HOST = os.getenv("HVAC_HOST")  # Setup your host here
+        self.TOKEN = os.getenv("HVAC_TOKEN")  # Setup your token here
 
         self.TICKETS = int(os.getenv("TICKETS"))  # Setup your tickets here
         self.T_MAX = int(os.getenv("T_MAX"))  # Setup your max temperature here
@@ -128,8 +128,8 @@ class Main:
     def get_conn(self):
         database_server_name = os.getenv("DATABASE_SERVER_NAME")
         database_name = os.getenv("DATABASE_NAME")
-        user_name = os.getenv("USER_NAME")
-        user_password = os.getenv("USER_PASSWORD")
+        user_name = os.getenv("DATABASE_USER_NAME")
+        user_password = os.getenv("DATABASE_USER_PASSWORD")
         connection_string = (
             """Driver={ODBC Driver 18 for SQL Server};
                                 Server=tcp:"""
