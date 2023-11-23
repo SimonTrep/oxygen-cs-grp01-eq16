@@ -1,0 +1,10 @@
+resources:
+- oxygen-deployment.yaml
+secretGenerator:
+- name: oxygen-secrets
+  files:
+  - oxygen-secrets.txt
+configMapGenerator:
+- name: oxygen-envvars
+  files:
+  - oxygen-envvars.txt

@@ -38,6 +38,15 @@ spec:
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 5000
-        envFrom:
-        - configMapRef:
-            name: oxygen-env-file
+        volumeMounts:
+        - name: oxygen-secrets
+          mountPath: /secrets
+        - name: oxygen-envvars
+          mountPath: /config
+      volumes:
+      - name: oxygen-secrets
+        secret:
+          secretName: oxygen-secrets-hckmfm6698
+      - name: oxygen-envvars
+        configMap:
+          name: oxygen-envvars-tk5kcfdhg4
