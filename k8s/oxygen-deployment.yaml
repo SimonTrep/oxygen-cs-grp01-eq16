@@ -46,7 +46,7 @@ spec:
       volumes:
       - name: oxygen-secrets
         secret:
-          secretName: oxygen-secrets-hckmfm6698
+          secretName: oxygen-secrets-d4d2kd52bc
       - name: oxygen-envvars
         configMap:
-          name: oxygen-envvars-tk5kcfdhg4
+          name: oxygen-envvars-dh2744c6d2
