@@ -76,7 +76,7 @@ jobs:
           black src/ test/
 
 
-  deploy:
+  containerize:
 
     runs-on: ubuntu-latest
 
@@ -115,3 +115,29 @@ jobs:
           push: true
           tags: ${{ env.DOCKERHUB_REPO }}/${{ env.IMAGE_NAME }}:${{ env.GITHUB_RUN_NUMBER }}, ${{ env.DOCKERHUB_REPO }}/${{ env.IMAGE_NAME }}:latest
           labels: ${{ steps.meta.outputs.labels }}
+
+  deploy:
+    
+    runs-on: ubuntu-latest
+
+    # needs: containerize
+
+    # if: github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Install MicroK8s
+        uses: balchua/microk8s-actions@v0.1.3
+        with:
+          channel: 'latest/stable'
+
+      - name: Check out the repo
+        uses: actions/checkout@v4
+
+      - name: Test oxygen-app
+        id: Oxygen
+        run: |
+          set -ex
+          kubectl apply -f ${{ github.workspace }}/k8s/oxygen-deployment.yaml
+          kubectl expose deployment oxygen-deployment --cluster-ip=10.152.183.210
+          kubectl rollout status deployment/oxygen-deployment
+          curl 10.152.183.210 | grep oxygen-app
