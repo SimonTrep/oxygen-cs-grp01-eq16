@@ -138,6 +138,6 @@ jobs:
         run: |
           set -ex
           kubectl apply -f ${{ github.workspace }}/k8s/oxygen-deployment.yaml
-          kubectl expose deployment oxygen-deployment --cluster-ip=10.152.183.210
-          kubectl rollout status deployment/oxygen-deployment
+          kubectl expose deployment oxygen-app --cluster-ip=10.152.183.210
+          kubectl rollout status deployment/oxygen-app
           curl 10.152.183.210 | grep oxygen-app
