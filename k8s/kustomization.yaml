@@ -1,8 +1,10 @@
 secretGenerator:
-- name: oxygen-secrets
-  files:
-  - oxygen-secrets.txt
-configMapGenerator:
-- name: oxygen-envvars
+- name: secrets
   envs:
-  - oxygen-envvars.txt
+  - secrets.env
+configMapGenerator:
+- name: properties
+  envs:
+  - properties.env
+generatorOptions:
+  disableNameSuffixHash: true

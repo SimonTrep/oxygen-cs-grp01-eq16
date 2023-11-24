@@ -137,5 +137,5 @@ deploy_rsa.pub
 
 # Kubernetes config
 kubeconfig.yaml
-oxygen-envvars.txt
-oxygen-secrets.txt
+properties.env
+secrets.env
