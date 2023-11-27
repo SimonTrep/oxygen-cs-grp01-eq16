@@ -27,7 +27,7 @@ spec:
     spec:
       containers:
       - name: oxygen-app
-        image: log680eq16/oxygen-cs-grp01-eq16:latest
+        image: oxygen-image
         resources:
           requests:
             memory: "64Mi"

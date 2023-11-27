@@ -8,3 +8,7 @@ configMapGenerator:
   - properties.env
 generatorOptions:
   disableNameSuffixHash: true
+images:
+- name: oxygen-image
+  newName: log680eq16/oxygen-cs-grp01-eq16
+  newTag: IMAGE_TAG

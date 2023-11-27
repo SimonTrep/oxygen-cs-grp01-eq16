@@ -126,6 +126,7 @@ jobs:
 
     env:
       KUBECONFIG: ${{ secrets.KUBECONFIG }}
+      GITHUB_RUN_NUMBER: ${{ github.run_number }}
 
     steps:
       - name: Check out the repo
@@ -135,7 +136,8 @@ jobs:
         id: Oxygen
         run: | 
           set -ex
-          cat ${{ env.KUBECONFIG }} > ~/.kube/config
+          echo ${{ env.KUBECONFIG }} > ~/.kube/config
+          sed -i "s/IMAGE_TAG/${{ env.GITHUB_RUN_NUMBER }}/g" ${{ github.workspace }}/k8s/kustomization.yaml
           kubectl apply -k ${{ github.workspace }}/k8s/
           kubectl apply -f ${{ github.workspace }}/k8s/oxygen-deployment.yaml
           kubectl rollout status deployment/oxygen-app
