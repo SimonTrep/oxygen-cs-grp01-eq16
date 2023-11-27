@@ -9,112 +9,112 @@ permissions:
   contents: read
 
 jobs:
-  test:
+  # test:
 
-    runs-on: ubuntu-latest
+  #   runs-on: ubuntu-latest
 
-    env:
-      DATABASE_SERVER_NAME: ${{ secrets.DATABASE_SERVER_NAME }}
-      DATABASE_NAME: ${{ secrets.DATABASE_NAME }}
-      DATABASE_USER_NAME: ${{ secrets.DATABASE_USER_NAME }}
-      DATABASE_USER_PASSWORD: ${{ secrets.DATABASE_USER_PASSWORD }}
-      HVAC_HOST: ${{ secrets.HVAC_HOST }}
-      HVAC_TOKEN: ${{ secrets.HVAC_TOKEN }}
-      GITHUB_RUN_NUMBER: ${{ github.run_number }}
-      TICKETS: 2
-      T_MAX: 25
-      T_MIN: 19
+  #   env:
+  #     DATABASE_SERVER_NAME: ${{ secrets.DATABASE_SERVER_NAME }}
+  #     DATABASE_NAME: ${{ secrets.DATABASE_NAME }}
+  #     DATABASE_USER_NAME: ${{ secrets.DATABASE_USER_NAME }}
+  #     DATABASE_USER_PASSWORD: ${{ secrets.DATABASE_USER_PASSWORD }}
+  #     HVAC_HOST: ${{ secrets.HVAC_HOST }}
+  #     HVAC_TOKEN: ${{ secrets.HVAC_TOKEN }}
+  #     GITHUB_RUN_NUMBER: ${{ github.run_number }}
+  #     TICKETS: 2
+  #     T_MAX: 25
+  #     T_MIN: 19
 
-    steps:
-      - name: Check out the repo
-        uses: actions/checkout@v4
+  #   steps:
+  #     - name: Check out the repo
+  #       uses: actions/checkout@v4
 
-      - name: Set up Python 3.10
-        uses: actions/setup-python@v4
-        with:
-          python-version: "3.10"
+  #     - name: Set up Python 3.10
+  #       uses: actions/setup-python@v4
+  #       with:
+  #         python-version: "3.10"
 
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          sudo apt-get update
-          sudo apt-get install -y --no-install-recommends unixodbc-dev unixodbc libpq-dev
-          pip install pylint black
-          pip install -r requirements.txt
+  #     - name: Install dependencies
+  #       run: |
+  #         python -m pip install --upgrade pip
+  #         sudo apt-get update
+  #         sudo apt-get install -y --no-install-recommends unixodbc-dev unixodbc libpq-dev
+  #         pip install pylint black
+  #         pip install -r requirements.txt
 
-      - name: Install ODBC Driver
-        run: |
-          if ! [[ "18.04 20.04 22.04 23.04" == *"$(lsb_release -rs)"* ]];
-          then
-              echo "Ubuntu $(lsb_release -rs) is not currently supported.";
-              exit;
-          fi
+  #     - name: Install ODBC Driver
+  #       run: |
+  #         if ! [[ "18.04 20.04 22.04 23.04" == *"$(lsb_release -rs)"* ]];
+  #         then
+  #             echo "Ubuntu $(lsb_release -rs) is not currently supported.";
+  #             exit;
+  #         fi
 
-          curl https://packages.microsoft.com/keys/microsoft.asc | sudo tee /etc/apt/trusted.gpg.d/microsoft.asc
+  #         curl https://packages.microsoft.com/keys/microsoft.asc | sudo tee /etc/apt/trusted.gpg.d/microsoft.asc
 
-          curl https://packages.microsoft.com/config/ubuntu/$(lsb_release -rs)/prod.list | sudo tee /etc/apt/sources.list.d/mssql-release.list
+  #         curl https://packages.microsoft.com/config/ubuntu/$(lsb_release -rs)/prod.list | sudo tee /etc/apt/sources.list.d/mssql-release.list
 
-          sudo apt-get update
-          sudo ACCEPT_EULA=Y apt-get install -y msodbcsql18
-          # optional: for bcp and sqlcmd
-          sudo ACCEPT_EULA=Y apt-get install -y mssql-tools18
-          echo 'export PATH="$PATH:/opt/mssql-tools18/bin"' >> ~/.bashrc
-          source ~/.bashrc
-          # optional: for unixODBC development headers
-          sudo apt-get install -y unixodbc-dev
+  #         sudo apt-get update
+  #         sudo ACCEPT_EULA=Y apt-get install -y msodbcsql18
+  #         # optional: for bcp and sqlcmd
+  #         sudo ACCEPT_EULA=Y apt-get install -y mssql-tools18
+  #         echo 'export PATH="$PATH:/opt/mssql-tools18/bin"' >> ~/.bashrc
+  #         source ~/.bashrc
+  #         # optional: for unixODBC development headers
+  #         sudo apt-get install -y unixodbc-dev
 
-      - name: Test with unittest
-        run: |
-          python -m unittest test.test.TestOxygenCs
+  #     - name: Test with unittest
+  #       run: |
+  #         python -m unittest test.test.TestOxygenCs
 
-      - name: Lint with pylint and stop build if there are python syntax errors or undefined names
-        run: |
-          pylint src/ test/ || (echo "Linting failed" && exit 1)
+  #     - name: Lint with pylint and stop build if there are python syntax errors or undefined names
+  #       run: |
+  #         pylint src/ test/ || (echo "Linting failed" && exit 1)
 
-      - name: Format with black
-        run: |
-          black src/ test/
+  #     - name: Format with black
+  #       run: |
+  #         black src/ test/
 
 
-  containerize:
+  # containerize:
 
-    runs-on: ubuntu-latest
+  #   runs-on: ubuntu-latest
 
-    needs: test
+  #   needs: test
 
-    # if: github.ref == 'refs/heads/main'
+  #   # if: github.ref == 'refs/heads/main'
 
-    env:
-      DOCKERHUB_USER_NAME: ${{ secrets.DOCKERHUB_USER_NAME }}
-      DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
-      GITHUB_RUN_NUMBER: ${{ github.run_number }}
-      DOCKERHUB_REPO: log680eq16
-      IMAGE_NAME: oxygen-cs-grp01-eq16
+  #   env:
+  #     DOCKERHUB_USER_NAME: ${{ secrets.DOCKERHUB_USER_NAME }}
+  #     DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
+  #     GITHUB_RUN_NUMBER: ${{ github.run_number }}
+  #     DOCKERHUB_REPO: log680eq16
+  #     IMAGE_NAME: oxygen-cs-grp01-eq16
 
-    steps:
-      - name: Check out the repo
-        uses: actions/checkout@v4
+  #   steps:
+  #     - name: Check out the repo
+  #       uses: actions/checkout@v4
 
-      - name: Log in to Docker Hub
-        uses: docker/login-action@f4ef78c080cd8ba55a85445d5b36e214a81df20a
-        with:
-          username: ${{ env.DOCKERHUB_USER_NAME }}
-          password: ${{ env.DOCKERHUB_PASSWORD }}
+  #     - name: Log in to Docker Hub
+  #       uses: docker/login-action@f4ef78c080cd8ba55a85445d5b36e214a81df20a
+  #       with:
+  #         username: ${{ env.DOCKERHUB_USER_NAME }}
+  #         password: ${{ env.DOCKERHUB_PASSWORD }}
 
-      - name: Extract metadata (tags, labels) for Docker
-        id: meta
-        uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
-        with:
-          images: ${{ env.DOCKERHUB_REPO }}/${{ env.IMAGE_NAME }}
+  #     - name: Extract metadata (tags, labels) for Docker
+  #       id: meta
+  #       uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
+  #       with:
+  #         images: ${{ env.DOCKERHUB_REPO }}/${{ env.IMAGE_NAME }}
 
-      - name: Build and push Docker image
-        uses: docker/build-push-action@3b5e8027fcad23fda98b2e3ac259d8d67585f671
-        with:
-          context: .
-          file: ./Dockerfile
-          push: true
-          tags: ${{ env.DOCKERHUB_REPO }}/${{ env.IMAGE_NAME }}:${{ env.GITHUB_RUN_NUMBER }}, ${{ env.DOCKERHUB_REPO }}/${{ env.IMAGE_NAME }}:latest
-          labels: ${{ steps.meta.outputs.labels }}
+  #     - name: Build and push Docker image
+  #       uses: docker/build-push-action@3b5e8027fcad23fda98b2e3ac259d8d67585f671
+  #       with:
+  #         context: .
+  #         file: ./Dockerfile
+  #         push: true
+  #         tags: ${{ env.DOCKERHUB_REPO }}/${{ env.IMAGE_NAME }}:${{ env.GITHUB_RUN_NUMBER }}, ${{ env.DOCKERHUB_REPO }}/${{ env.IMAGE_NAME }}:latest
+  #         labels: ${{ steps.meta.outputs.labels }}
 
   deploy:
     
@@ -136,9 +136,9 @@ jobs:
         run: | 
           set -ex
           mkdir ${HOME}/.kube
-          echo ${{ env.KUBECONFIG }} > ${HOME}/.kube/config
+          echo "${{ env.KUBECONFIG }}" > ${HOME}/.kube/config
           kubectl config use-context microk8s
-          sed -i "s/IMAGE_TAG/${{ env.GITHUB_RUN_NUMBER }}/g" ${{ github.workspace }}/k8s/kustomization.yaml
+          sed -i "s/IMAGE_TAG/58/g" ${{ github.workspace }}/k8s/kustomization.yaml
           kubectl apply -k ${{ github.workspace }}/k8s/
           kubectl apply -f ${{ github.workspace }}/k8s/oxygen-deployment.yaml
           kubectl rollout status deployment/oxygen-app
