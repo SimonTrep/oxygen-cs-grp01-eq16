@@ -124,20 +124,18 @@ jobs:
 
     # if: github.ref == 'refs/heads/main'
 
-    steps:
-      - name: Install MicroK8s
-        uses: balchua/microk8s-actions@v0.1.3
-        with:
-          channel: 'latest/stable'
+    env:
+      KUBECONFIG: ${{ secrets.KUBECONFIG }}
 
+    steps:
       - name: Check out the repo
         uses: actions/checkout@v4
 
-      - name: Test oxygen-app
+      - name: Deploy oxygen-app
         id: Oxygen
-        run: |
+        run: | 
           set -ex
+          cat ${{ env.KUBECONFIG }} > ~/.kube/config
+          kubectl apply -k ${{ github.workspace }}/k8s/
           kubectl apply -f ${{ github.workspace }}/k8s/oxygen-deployment.yaml
-          kubectl expose deployment oxygen-app --cluster-ip=10.152.183.210
           kubectl rollout status deployment/oxygen-app
-          curl 10.152.183.210 | grep oxygen-app
