@@ -125,7 +125,7 @@ jobs:
     # if: github.ref == 'refs/heads/main'
 
     env:
-      KUBECONFIG: ${{ secrets.KUBECONFIG }}
+      KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
       GITHUB_RUN_NUMBER: ${{ github.run_number }}
 
     steps:
@@ -136,5 +136,5 @@ jobs:
         run: | 
           set -x
           mkdir ${HOME}/.kube
-          echo "$KUBECONFIG" | base64 --decode > ${HOME}/.kube/config
+          echo "$KUBE_CONFIG" | base64 --decode > ${HOME}/.kube/config
           kubectl config use-context microk8s
