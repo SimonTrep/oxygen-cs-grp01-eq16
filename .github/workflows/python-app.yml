@@ -136,7 +136,7 @@ jobs:
         run: | 
           set -ex
           mkdir ${HOME}/.kube
-          echo "${{ env.KUBECONFIG }}" > ${HOME}/.kube/config
+          echo ${{ secrets.KUBECONFIG }} | base64 --decode > ${HOME}/.kube/config
           kubectl config use-context microk8s
           sed -i "s/IMAGE_TAG/58/g" ${{ github.workspace }}/k8s/kustomization.yaml
           kubectl apply -k ${{ github.workspace }}/k8s/
