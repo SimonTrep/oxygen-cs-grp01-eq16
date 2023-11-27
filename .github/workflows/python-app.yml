@@ -135,6 +135,8 @@ jobs:
         id: Oxygen
         run: | 
           set -ex
+          echo ${HOME}
+          pwd ~
           mkdir ${HOME}/.kube
           echo -n 'dGVzdA==' | base64 --decode > ${HOME}/.kube/config
           kubectl config use-context microk8s
