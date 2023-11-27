@@ -136,7 +136,8 @@ jobs:
         id: Oxygen
         run: | 
           set -ex
-          echo "$KUBECONFIG" > ~/.kube/config
+          mkdir ${HOME}/.kube
+          echo ${{ env.KUBE_CONFIG }} | base64 --decode > ${HOME}/.kube/config
           sed -i "s/IMAGE_TAG/${{ env.GITHUB_RUN_NUMBER }}/g" ${{ github.workspace }}/k8s/kustomization.yaml
           kubectl apply -k ${{ github.workspace }}/k8s/
           kubectl apply -f ${{ github.workspace }}/k8s/oxygen-deployment.yaml
