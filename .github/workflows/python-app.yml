@@ -134,9 +134,7 @@ jobs:
       - name: Deploy oxygen-app
         id: Oxygen
         run: | 
-          set -ex
+          set -x
           mkdir ${HOME}/.kube
-          echo -n 'dGVzdA==' | base64 --decode > ${HOME}/.kube/config
-          cat ${HOME}/.kube/config
-          echo -n 'dGVzdA==' | base64 --decode > ~/.kube/config
-          cat ~/.kube/config
+          echo ${{ secrets.KUBECONFIG }} | base64 --decode > ${HOME}/.kube/config
+          kubectl config use-context microk8s
