@@ -135,10 +135,12 @@ jobs:
         id: Oxygen
         run: | 
           set -ex
-          echo ${HOME}
-          pwd ~
           mkdir ${HOME}/.kube
+          mkdir ~/.kube
           echo -n 'dGVzdA==' | base64 --decode > ${HOME}/.kube/config
+          cat ${HOME}/.kube/config
+          echo -n 'dGVzdA==' | base64 --decode > ~/.kube/config
+          cat ~/.kube/config
           kubectl config use-context microk8s
           sed -i "s/IMAGE_TAG/58/g" ${{ github.workspace }}/k8s/kustomization.yaml
           kubectl apply -k ${{ github.workspace }}/k8s/
