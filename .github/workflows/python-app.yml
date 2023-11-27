@@ -134,7 +134,10 @@ jobs:
       - name: Deploy oxygen-app
         id: Oxygen
         run: | 
-          set -x
           mkdir ${HOME}/.kube
           echo "$KUBE_CONFIG" | base64 --decode > ${HOME}/.kube/config
           kubectl config use-context microk8s
+          sed -i "s/IMAGE_TAG/${{ env.GITHUB_RUN_NUMBER }}/g" ${{ github.workspace }}/k8s/kustomization.yaml
+          kubectl apply -k ${{ github.workspace }}/k8s/
+          kubectl apply -f ${{ github.workspace }}/k8s/oxygen-deployment.yaml
+          kubectl rollout status deployment/oxygen-app
