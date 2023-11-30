@@ -1,0 +1,10 @@
+secretGenerator:
+- name: secrets
+  envs:
+  - secrets.env
+configMapGenerator:
+- name: properties
+  envs:
+  - properties.env
+generatorOptions:
+  disableNameSuffixHash: true
